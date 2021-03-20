@@ -2,8 +2,9 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-axios.defaults.baseURL = '//localhost:8080';
-// axios.defaults.baseURL = 'https://api.example.com';
+// axios.defaults.baseURL = '//localhost:8080';
+axios.defaults.baseURL = 'http://blog-server.hunger-valley.com/';
+
 window.request = request
 
 export default function request(url, type = 'GET', data = {}) {
@@ -14,10 +15,14 @@ export default function request(url, type = 'GET', data = {}) {
             }
             if (type.toLocaleLowerCase() === 'get') {
                 option.params = data
+            } else {
+                option.data = data
             }
             if (localStorage.token) {
                 axios.defaults.headers.common['Authorization'] = localStorage.token
             }
+
+            // console.log(data)
 
             axios(option).then(res => {
                 console.log(res.data)
