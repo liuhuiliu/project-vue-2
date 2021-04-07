@@ -33,7 +33,7 @@ html,body,#app{
   text-align: center;
   color: #2c3e50;
   margin-top: 60px; */
-  
+  min-width: 600px;
   display: grid;
   grid-template-columns: 12% auto 12%;
   grid-template-rows: auto 1fr auto;
