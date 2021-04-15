@@ -32,7 +32,12 @@ export default function request(url, type = 'GET', data = {}) {
                     }
                     resolve(res.data)
                 } else {
-                    Message.error(res.data.msg)
+                    // Message.error(res.data.msg)
+                    Message({
+                        message: res.data.msg,
+                        type: 'warning'
+                    })
+                    console.log(res.data.msg)
                     reject(res.data)
                 }
 

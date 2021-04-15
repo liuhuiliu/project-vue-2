@@ -1,22 +1,37 @@
 <template>
    <div id="login">
     <h4>用户名</h4>
-    <el-input v-model="username" placeholder="用户名"></el-input>
+    <input v-model="username" placeholder="用户名">
     <!-- <p class="error">当前用户名已注册</p> -->
     <h4>密码</h4>
-    <el-input v-model="password" type="password" placeholder="密码" ></el-input>
+    <input v-model="password" type="password" placeholder="密码" @keyup.enter="onLogin">
     <!-- <p class="error">当前用户名已注册</p> -->
-    <el-button size="medium">立即登录</el-button>
+    <el-button id="login-btn" size="medium" @click="onLogin" >立即登录</el-button>
     <p class="notice">没有账号？<router-link to="/register">注册新用户</router-link></p>
   </div>
 </template>
 
 <script>
+import{mapState,mapGetters,mapActions} from 'vuex'
 export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      username: '',
+      password:''
+    }
+  },
+  methods:{
+    ...mapActions([
+      'login'
+    ]),
+
+    onLogin(){
+      this.login({username:this.username,password:this.password})
+      .then(()=>{
+        this.$router.push({path:'/'})
+      })
+      console.log(this.username+'+'+this.password)
     }
   }
 }
@@ -48,7 +63,7 @@ export default {
   }
 
   button {
-    margin-top: 10px;
+    margin-top: 20px;
     justify-self: start;
   }
 
@@ -62,5 +77,17 @@ export default {
       color: @themeColor;
     }
   }
+}
+#login-btn{
+  color: #ffa600;
+
+}
+#login-btn:hover{
+  // color: #ffa600;
+  background-color: #ffa600;
+  color:#fff ;
+  // box-shadow:0px 5px 1px 5px rgba(0, 0, 0, 0.05);
+  
+             
 }
 </style>
