@@ -9,7 +9,7 @@
         </div>
       </template>
       <template v-if="isLogin">
-          <h1>Study Together</h1>
+          <h1><router-link>Study Together</router-link></h1>
           <i class="edit el-icon-edit"></i>
           <div class="user">
             <img class="avatar" :src="user.avatar" :title="user.name" :alt="user.name">
