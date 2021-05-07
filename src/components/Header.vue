@@ -61,6 +61,7 @@ export default {
     onLogout(){
     this.logout()
     // console.log('done')
+    this.$router.push({path:'/'})
   }
   },
   

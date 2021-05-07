@@ -11,14 +11,14 @@ const getters = {
     } //getters 多走一步，也是返回user和isLogin
 const mutations = {
     setUser(state, payload) {
-        console.log(state.user)
-        console.log(payload.user)
+        // console.log(state.user)
+        // console.log(payload.user)
         state.user = payload.user
-        console.log(state.user)
+            // console.log(state.user)
     },
     setLogin(state, payload) {
-        console.log(state.isLogin)
-        console.log(payload.isLogin)
+        // console.log(state.isLogin)
+        // console.log(payload.isLogin)
         state.isLogin = payload.isLogin
             // console.log(state.isLogin)
     }
@@ -44,10 +44,12 @@ const actions = {
         console.log(localStorage.token)
         localStorage.token = undefined
         console.log(localStorage.token)
+
     },
     async checkLogin({ commit, state }) {
         // console.log('running checkLogin')
         if (state.isLogin) return true
+            // console.log('done')
         let res = await auth.getInfo()
         commit('setLogin', { isLogin: res.isLogin })
             // console.log('done1')

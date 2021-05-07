@@ -29,9 +29,11 @@ export default {
     onLogin(){
       this.login({username:this.username,password:this.password})
       .then(()=>{
-        this.$router.push({path:'/'})
+        // this.$router.push({path:'/'})
+        console.log(this.$route.query.redirect)
+        this.$router.push({path:this.$route.query.redirect||'/'})
       })
-      console.log(this.username+'+'+this.password)
+      // console.log(this.username+'+'+this.password)
     }
   }
 }
