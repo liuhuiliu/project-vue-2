@@ -7,66 +7,27 @@
    <el-button @click="onClick1">默认按钮1</el-button>
    <el-button @click="onClick2">默认按钮2</el-button> -->
    <section class="blog-posts">
-     <div class="item">
+     <router-link class="item" :to="`/detail/${blog.id}`" v-for="(blog,index) in blogs" :key="index">
        <figure class="avatar">
-         <img src="../../assets/userpic2.jpg" alt="">
+         <img :src="blog.user.avatar" :alt="blog.user.username">
          <figcaption>
-           username
+           {{blog.user.username}}
          </figcaption>
        </figure> 
-       <h3>前端异步简述 <span>3天前</span> </h3>
-       <p>本文以一个简单的文件读写为例，讲解了异步的不同写法，包括 普通的 callback、ES2016中的Promise和Generator、 Node 用于解决回调的co 模块、ES2017中的async/await。适合初步接触 Node.js以及少量 ES6语法的同学阅读...</p>    
-     </div>
-     <div class="item">
-       <figure class="avatar">
-         <img src="../../assets/userpic2.jpg" alt="">
-         <figcaption>
-           username
-         </figcaption>
-       </figure>
-       <h3>前端异步简述 <span>3天前</span> </h3>
-       <p>本文以一个简单的文件读写为例，讲解了异步的不同写法，包括 普通的 callback、ES2016中的Promise和Generator、 Node 用于解决回调的co 模块、ES2017中的async/await。适合初步接触 Node.js以及少量 ES6语法的同学阅读...</p>      
-     </div>
-     <div class="item">
-       <figure class="avatar">
-         <img src="../../assets/userpic2.jpg" alt="">
-         <figcaption>
-           username
-         </figcaption>
-       </figure>
-       <h3>前端异步简述 <span>3天前</span> </h3>
-       <p>本文以一个简单的文件读写为例，讲解了异步的不同写法，包括 普通的 callback、ES2016中的Promise和Generator、 Node 用于解决回调的co 模块、ES2017中的async/await。适合初步接触 Node.js以及少量 ES6语法的同学阅读...</p>      
-     </div>
-     <div class="item">
-       <figure class="avatar">
-         <img src="../../assets/userpic2.jpg" alt="">
-         <figcaption>
-           username
-         </figcaption>
-       </figure>
-       <h3>前端异步简述 <span>3天前</span> </h3>
-       <p>本文以一个简单的文件读写为例，讲解了异步的不同写法，包括 普通的 callback、ES2016中的Promise和Generator、 Node 用于解决回调的co 模块、ES2017中的async/await。适合初步接触 Node.js以及少量 ES6语法的同学阅读...</p>      
-     </div>
-     <div class="item">
-       <figure class="avatar">
-         <img src="../../assets/userpic2.jpg" alt="">
-         <figcaption>
-           username
-         </figcaption>
-       </figure>
-       <h3>前端异步简述 <span>3天前</span> </h3>
-       <p>本文以一个简单的文件读写为例，讲解了异步的不同写法，包括 普通的 callback、ES2016中的Promise和Generator、 Node 用于解决回调的co 模块、ES2017中的async/await。适合初步接触 Node.js以及少量 ES6语法的同学阅读...</p>      
-     </div>
-     <div class="item">
-       <figure class="avatar">
-         <img src="../../assets/userpic2.jpg" alt="">
-         <figcaption>
-           username
-         </figcaption>
-       </figure>
-       <h3>前端异步简述 <span>3天前</span> </h3>
-       <p>本文以一个简单的文件读写为例，讲解了异步的不同写法，包括 普通的 callback、ES2016中的Promise和Generator、 Node 用于解决回调的co 模块、ES2017中的async/await。适合初步接触 Node.js以及少量 ES6语法的同学阅读...</p>      
-     </div>
+       <h3>{{blog.title}} <span>{{friendlyDate(blog.createdAt)}}</span> </h3>
+       <p>{{blog.description}}</p>    
+     </router-link>
+     
+   </section >
+   <section class="pagination">
+     <el-pagination 
+     layout="prev, pager, next" 
+     :total="total"
+     @current-change="onPageChange"
+     :page-size="pageLength"
+     :current-page="this.page"
+     >
+  </el-pagination>
    </section>
   </div>
   
@@ -75,7 +36,7 @@
 <script>
 import request from '@/helpers/request.js'
 import auth from'@/api/auth.js'
-
+import blog from '@/api/blog'
 window.request = request
 window.auth = auth
 
@@ -83,21 +44,63 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Welcome to Your Vue.js App',
+      blogs:[],
+      total:undefined,
+      page:undefined,
+      totalPage:undefined,
+      pageLength:undefined,
     }
   },
+  created(){
+    this.page = parseInt(this.$route.query.page)||1
+    blog.getIndexBlogs({page:this.page}).then(res=>{
+      // console.log(res)
+      this.blogs = res.data
+      this.total = res.total//首页所有贴子数量
+      this.page = res.page//当前分页
+      this.totalPage = res.totalPage//所有分页
+      
+      //页码尾页重新计算bug
+      if(this.page<this.totalPage){
+        this.pageLength = res.data.length
+        // console.log('done')
+      }else if(this.page==this.totalPage){
+        console.log(res.data.length)
+        this.pageLength=(this.total-res.data.length)/(this.totalPage-1)
+        // console.log(this.pageLength)
+      }
+      
+      // console.log(this.total)
+      // console.log(this.page)
+      // console.log(this.totalPage)
+      
+    })
+  }
+  ,
   methods:{
-    onClick1(){
-      this.$message('hello')
-    },
-    onClick2(){
-       this.$alert('test content', 'title', {
-          confirmButtonText: 'button text',
-          callback: action => {
-            console.log('done')
-            this.$message('hello')
-          }
-        });
+    // onClick1(){
+    //   this.$message('hello')
+    // },
+    // onClick2(){
+    //    this.$alert('test content', 'title', {
+    //       confirmButtonText: 'button text',
+    //       callback: action => {
+    //         console.log('done')
+    //         this.$message('hello')
+    //       }
+    //     });
+    // }
+    onPageChange(newPage){
+      // console.log(newPage)
+      blog.getIndexBlogs({page:newPage}).then(res=>{
+        // console.log(res)
+        this.blogs=res.data
+        this.total = res.total
+        this.page = res.page
+        this.$router.push({path:'/',query:{page:newPage}})
+        
+      })
     }
   }
 }
@@ -110,14 +113,15 @@ export default {
 //  #index{
 //     color:red;
 //   }
-  p{
-    // color: @themeColor;
-  }
+  // p{
+  //   // color: @themeColor;
+  // }
  .item{
    display: grid;
    grid: auto auto / 80px 1fr;
    margin: 20px 0;
-
+   word-wrap: break-word;
+	 word-break: break-all;
    .avatar{
      grid-column: 1;//列
      grid-row: 1/ span 2;
@@ -150,6 +154,11 @@ export default {
     grid-row: 2;
     margin-top: 0;
   }
-
-
+a{
+  color:black
+}
+.pagination{
+  display: grid;
+  justify-items: center;
+}
 </style>

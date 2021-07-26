@@ -1,49 +1,146 @@
 <template>
   <div id="user">
    <section class="user-info">
-      <img src="../../assets/userpic2.jpg" alt="" class="avatar">
-      <h3>user</h3>
+      <img :src="user.avatar" :alt="user.username" class="avatar">
+      <h3>{{user.username}}</h3>
     </section>
     <section>
-      <div class="item">
-        <div class="date">
-          <span class="day">20</span>
-          <span class="month">5月</span>
-          <span class="year">2018</span>
-        </div>
-        <h3>前端异步解密</h3>
-        <p>本文以一个简单的文件读写为例，讲解了异步的不同写法，包括 普通的 callback、ES2016中的Promise和Generator、 Node 用于解决回调的co 模块、ES2017中的async/await。适合初步接触 Node.js以及少量 ES6语法的同学阅读...</p>
-        <div class="actions">
-          <router-link to="/edit">编辑</router-link>
-          <a href="#">删除</a>
-        </div>
+    <router-link class="item" v-for="blog in blogs" :key= blog.id :to="`/detail/${blog.id}`">
+      <div class="date">
+        <span class="day">{{splitDate(blog.createdAt).date}}</span>
+        <span class="month">{{splitDate(blog.createdAt).month}}</span>
+        <span class="year">{{splitDate(blog.createdAt).year}}</span>
       </div>
-
-      <div class="item">
-        <div class="date">
-          <span class="day">20</span>
-          <span class="month">5月</span>
-          <span class="year">2018</span>
-        </div>
-        <h3>前端异步解密</h3>
-        <p>本文以一个简单的文件读写为例，讲解了异步的不同写法，包括 普通的 callback、ES2016中的Promise和Generator、 Node 用于解决回调的co 模块、ES2017中的async/await。适合初步接触 Node.js以及少量 ES6语法的同学阅读...</p>
-        <div class="actions">
-          <router-link to="/edit">编辑</router-link>
-          <a href="#">删除</a>
-        </div>
+      <h3>{{blog.title}}</h3>
+      <p>{{blog.description}}</p>
+      <div class="actions">
+        <router-link :to="`/edit/${blog.id}`" >编辑</router-link>
+        <a href="#" class="deleteBtn" @click.prevent="onDelete(blog.id)">删除</a>
       </div>
-
+    </router-link>
+    </section>
+    <section class="pagination">
+     <el-pagination 
+     layout="prev, pager, next" 
+     :total="total"
+     @current-change="onPageChange"
+     :page-size="pageLength"
+     :current-page="currentPage"
+     >
+  </el-pagination>
     </section>
   </div>
 </template>
 
 <script>
+import request from '@/helpers/request.js'
+import auth from'@/api/auth.js'
+import blog from '@/api/blog'
+import {mapGetters} from 'vuex'
+
 export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      blogs:[],
+      // user:{},
+      currentPage:undefined,
+      total:undefined,
+      pageLength:undefined, 
+      totalPage:undefined,
     }
+  },
+  computed:{
+    ...mapGetters(['user'])
+  },
+
+  created(){
+    // this.userId=this.$route.params.userId//替换为computed的useridjieue
+    this.currentPage = parseInt(this.$route.query.page)||1//注意
+    console.log(this.currentPage)
+    // console.log(this.user.id+'test')
+    blog.getBlogsByUserId(this.user.id,{page:this.currentPage}).then(
+      res=>{
+        console.log(res)
+        // console.log(typeof(res.page))
+        this.currentPage=Number(res.page)
+        this.total=res.total
+        this.blogs=res.data
+        this.totalPage = res.totalPage
+      
+      // if(res.data.length>0 ){
+      //   // this.user= res.data[0].user//mapGetters替代
+      //   console.log(res.data.length)
+      // }
+        if(this.totalPage==1){
+          this.pageLength = Number(this.total)
+        }else if(this.currentPage<this.totalPage){
+          
+          this.pageLength = Number(res.data.length)
+        }else if(this.currentPage===this.totalPage){
+          
+          this.pageLength = (this.total-res.data.length)/(this.totalPage-1)
+        }else{
+          console.log('nothing')
+        }
+      }
+
+
+    )
+  },
+  methods:{
+    onPageChange(newPage){
+      blog.getBlogsByUserId(this.user.id,{page: newPage}).then(res=>{
+        console.log(res)
+        console.log(newPage)
+        this.blogs = res.data
+        this.total = res.total
+        this.currentPage = res.page
+        this.$router.push({path:`/my`,query:{page: newPage}})
+      })
+    },
+    splitDate(dataStr){
+      let dateObj = typeof dataStr === 'object' ? dataStr:new Date(dataStr)
+      let dateStr= dateObj.getDate();
+      let MonthStr= (dateObj.getMonth()) +1;
+      let YearStr= dateObj.getFullYear();
+      // console.log(dateStr)
+      // console.log(MonthStr)
+      return{
+        date: dateObj.getDate(),
+        month: (dateObj.getMonth()) +1,
+        year: dateObj.getFullYear(),
+      }
+    },
+    async onDelete(blogId){
+     this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          center: true
+        }).then(() => {
+          blog.deleteBlog({blogId}).then(()=>{
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+          });
+          this.blogs = this.blogs.filter(blog =>blog.id !=blogId)
+          // this.$router.go(0)//刷新
+          // this.$router.push({path:'/my'})
+          }).catch(console.log('cancel'))
+          
+        })
+        //用async await的方法
+        // await this.this.$confirm('此操作将永久删除该文章, 是否继续?', '提示', {
+        //   confirmButtonText: '确定',
+        //   cancelButtonText: '取消',
+        //   type: 'warning',
+        //   center: true
+        // })
+        // await blog.deleteBlog({blogId})
+        // this.$message.success('done')
+      
+    },
   }
 }
 </script>
@@ -80,7 +177,9 @@ export default {
     display: grid;
     grid: auto  auto auto / 80px 1fr;
     margin: 20px 0;
-
+    word-wrap: break-word;
+	  word-break: break-all;
+    
     .date {
       grid-column: 1;
       grid-row: 1 / span 3;
@@ -106,20 +205,42 @@ export default {
       grid-column: 2;
       grid-row: 2;
       margin-top: 0;
+      color: rgba(0, 0, 0, 0.753);
     }
 
     .actions {
       grid-column: 2;
       grid-row: 3;
-      font-size: 12px;
+      font-size: 14px;
 
       a {
-        color: @themeLighterColor;
+        // color: @themeLighterColor;
+        color:#ffa600ab;
+        
+        
       }
-      
+      .deleteBtn{
+        margin-left: 10px;
+      }
     }
 
   }
-
+a {
+        // color: @themeLighterColor;
+        color:black
+      }
 }
+.pagination{
+  display: grid;
+  justify-items: center;
+}
+// .el-button--default{
+//   color:#ffa600;
+// }
+.el-button--primary:focus{
+  background-color: #fff;
+  border-color: none;
+  color:#ffa600;
+}
+
 </style>

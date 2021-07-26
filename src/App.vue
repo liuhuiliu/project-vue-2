@@ -49,6 +49,7 @@ html,body,#app{
 }
 #main{
   grid-area: main;
+  /* max-width: 1000px;s */
 }
 #footer{
   grid-area: footer;
@@ -59,7 +60,7 @@ html,body,#app{
 @media(max-width:768px){
   #app{
     grid-template-columns: 10px auto 10px;
-    
+    min-width: 500px;
     
   }
   #header,#footer{

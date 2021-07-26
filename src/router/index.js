@@ -12,7 +12,10 @@ import Router from 'vue-router'
 import store from '../store'
 
 window.store = store
+
+
 Vue.use(Router)
+
 
 // const router = new Router({
 //     routes: [{
@@ -150,7 +153,7 @@ router.beforeEach((to, from, next) => {
                     })
                 } else {
                     next()
-                    console.log('d1')
+                        // console.log('d1')
                 }
             }
 
@@ -161,7 +164,7 @@ router.beforeEach((to, from, next) => {
             })
         })
     } else {
-        console.log('d1')
+        // console.log('d1')
         next() // 确保一定要调用 next()
     }
 })

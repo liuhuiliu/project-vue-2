@@ -1,4 +1,5 @@
 import request from '@/helpers/request'
+import blog from '../store/modules/blog'
 
 const URL = {
     GET_LIST: '/blog',
@@ -20,7 +21,9 @@ export default {
         return this.getBlogs({ userId, page, atIndex })
     },
     getDetail({ blogId }) {
-        return request(URL.GET_DTAIL.replace(':blogId', blogId))
+        // console.log(blogId)
+        // console.log(URL.GET_DETAIL.replace(':blogId', blogId))
+        return request(URL.GET_DETAIL.replace(':blogId', blogId))
     },
     updateBlog({ blogId }, { title, content, description, atIndex }) {
         return request(URL.UPDATE.replace(':blogId', blogId), 'PATCH', { title, content, description, atIndex })

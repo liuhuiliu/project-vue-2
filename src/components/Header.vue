@@ -9,12 +9,13 @@
         </div>
       </template>
       <template v-if="isLogin">
-          <h1><router-link>Study Together</router-link></h1>
-          <i class="edit el-icon-edit"></i>
+          <h1><router-link to="/">Study Together</router-link></h1>
+          <router-link to="/create" alt="创建新博客"><i class="edit el-icon-plus"></i></router-link>
+          <!-- <i class="edit el-icon-plus"></i> -->
           <div class="user">
-            <img class="avatar" :src="user.avatar" :title="user.name" :alt="user.name">
+            <img class="avatar" :src="user.avatar" :title="user.name" :alt="user.username">
             <ul>
-              <li><router-link to="/my">我的</router-link></li>
+              <li><router-link :to="`/my`">我的</router-link></li>
               <li><a href="#" @click="onLogout">注销</a></li>
             </ul>
           </div>
@@ -36,7 +37,7 @@ export default {
     return {
     //   msg: 'Welcome to Your Vue.js App'
     // isLogin: true
-
+    
     }
   },
   computed:{
@@ -79,6 +80,16 @@ header.no-login{
     display: grid;
     justify-items: center;
 
+    .btn{
+      color:#fff;
+      background-color:#ffa600;
+    }
+    .btn:hover{
+      color:#ffa600;
+      background-color:#fff;;
+      
+    }
+
     h1{
     color: #fff;
     font-size: 40px;
@@ -87,8 +98,10 @@ header.no-login{
 
 }
     p{
+    font-size: 18px;
     margin: 12px 0 0 0;
     color:#fff;
+    
 }
 //     .btns{
 //     margin-top: 20px;
@@ -112,11 +125,6 @@ button:hover {
 } 
 }
 
-// el-button{
-//   background-color: none;
-// }
-
-
 
 header.login{
     display: flex;
@@ -129,6 +137,9 @@ header.login{
     margin: 0 0 0 0 ;
     text-transform: uppercase;
     flex: 1;
+    a{
+      color: #fff;
+    }
 }
     .avatar {
     width: 40px;
