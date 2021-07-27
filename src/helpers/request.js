@@ -3,8 +3,8 @@ import { Message } from 'element-ui'
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 // axios.defaults.baseURL = '//localhost:8080';
-axios.defaults.baseURL = 'https://blog-server.hunger-valley.com/';
-
+axios.defaults.baseURL = '//blog-server.hunger-valley.com/';
+// axios.defaults.baseURL = 'https://blog-server.hunger-valley.com/';
 window.request = request
 
 export default function request(url, type = 'GET', data = {}) {
