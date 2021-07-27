@@ -1,5 +1,7 @@
 <template>
+
   <div id="app">
+    
     <!-- <img src="./assets/logo.png"> -->
     <Header id="header"></Header>
     <main id="main"><router-view/></main>

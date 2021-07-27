@@ -10,7 +10,14 @@
       </template>
       <template v-if="isLogin">
           <h1><router-link to="/">Study Together</router-link></h1>
-          <router-link to="/create" alt="创建新博客"><i class="edit el-icon-plus"></i></router-link>
+          <div class="create">
+            <router-link to="/create" alt="创建新博客" >
+            <i class="edit el-icon-plus"></i>
+            
+            </router-link>
+            <ul><li>创建新博客</li></ul>
+          </div>
+          
           <!-- <i class="edit el-icon-plus"></i> -->
           <div class="user">
             <img class="avatar" :src="user.avatar" :title="user.name" :alt="user.username">
@@ -179,7 +186,36 @@ header.login{
     display: block;
   }
 }
+.create{
+  position: relative;
+  ul{
+    width: 70px;
+    display:none;
+    
+    position: absolute;
+    right: -35px;
+    list-style: none;
+    border: 1px solid #eaeaea;
+    margin: 2 2px;
+    padding: 0 10px;
+    background-color: #fff;
+  }
+  &:hover ul{
+    display:block;
+  }
+  
+  li{
+    // overflow: hidden;
+    white-space:nowrap;
+    color: #333;
+    font-size: 14px;
+    text-align: center;
+    // float: left;
+    
+  }
 }
+}
+
 
 
 
